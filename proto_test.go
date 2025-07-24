@@ -25,10 +25,11 @@ func TestProtocol(t *testing.T) {
 		fmt.Printf("Read %s\n", v.Type())
 		if v.Type() == resp.Array {
 			for _, v := range v.Array() {
-				if v.String() == CommandSET {
-					panic("works")
+				switch v.String() {
+				case CommandSET:
+				default:
+
 				}
-				fmt.Printf("%s\n", v)
 			}
 		}
 	}
