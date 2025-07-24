@@ -1,15 +1,42 @@
 package main
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"log"
 
-type Command struct{}
+	"github.com/tidwall/resp"
+)
 
-func parseCommand(msg string) (Command, error) {
-	t := msg[0]
-	fmt.Println(t)
-	switch t {
-	case '*':
-		fmt.Println(msg[1:])
+const (
+	CommandSET = "SET"
+)
+
+type Command interface{}
+
+type SetCommand struct {
+	key, val string
+}
+
+func parseCommand(raw string) (Command, error) {
+	rd := resp.NewReader(bytes.NewBufferString(raw))
+
+	for {
+		v, _, err := rd.ReadValue()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		// fmt.Printf("Read %s\n", v.Type())
+		if v.Type() == resp.Array {
+			for i, v := range v.Array() {
+				fmt.Printf("  #%d %s, value: '%s'\n", i, v.Type(), v)
+			}
+		}
 	}
-	return Command{}, nil
+
+	return "foo", nil
 }
