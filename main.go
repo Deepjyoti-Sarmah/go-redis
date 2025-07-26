@@ -114,7 +114,7 @@ func main() {
 
 	for i := 0; i < 10; i++ {
 		c := client.New("localhost:5001")
-		if err := c.Set(context.TODO(), "foo", "bar"); err != nil {
+		if err := c.Set(context.TODO(), fmt.Sprintf("foo _%d", i), fmt.Sprintf("bar _%d", i)); err != nil {
 			log.Fatal(err)
 		}
 	}
