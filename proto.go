@@ -20,6 +20,26 @@ type SetCommand struct {
 }
 
 func parseCommand(raw string) (Command, error) {
+	// rd := resp.NewReader(bytes.NewBufferString(raw))
+	//
+	// for {
+	// 	v, _, err := rd.ReadValue()
+	// 	if err == io.EOF {
+	// 		break
+	// 	}
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// 	// fmt.Printf("Read %s\n", v.Type())
+	// 	if v.Type() == resp.Array {
+	// 		for i, v := range v.Array() {
+	// 			fmt.Printf("  #%d %s, value: '%s'\n", i, v.Type(), v)
+	// 		}
+	// 	}
+	// }
+	//
+	// return "foo", nil
+
 	rd := resp.NewReader(bytes.NewBufferString(raw))
 
 	for {
@@ -30,10 +50,22 @@ func parseCommand(raw string) (Command, error) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		// fmt.Printf("Read %s\n", v.Type())
+
+		fmt.Printf("Read %s\n", v.Type())
+
 		if v.Type() == resp.Array {
-			for i, v := range v.Array() {
-				fmt.Printf("  #%d %s, value: '%s'\n", i, v.Type(), v)
+			for _, value := range v.Array() {
+				switch value.String() {
+				case CommandSET:
+					if len(v.Array()) != 3 {
+						return nil, fmt.Errorf("invalid number of variables for SET command")
+					}
+					cmd := SetCommand{
+						key: v.Array()[1].String(),
+						val: v.Array()[2].String(),
+					}
+					return cmd, nil
+				}
 			}
 		}
 	}

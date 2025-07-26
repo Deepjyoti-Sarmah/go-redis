@@ -50,7 +50,16 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) handleRawMessage(rawMsg []byte) error {
-	fmt.Println(string(rawMsg))
+	cmd, err := parseCommand(string(rawMsg))
+	if err != nil {
+		return err
+	}
+
+	switch v := cmd.(type) {
+	case SetCommand:
+		fmt.Println("somebody want to set a key into the hash table", "key", v.key, "value", v.val)
+	}
+
 	return nil
 }
 
