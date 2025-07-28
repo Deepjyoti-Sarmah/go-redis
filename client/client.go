@@ -33,7 +33,7 @@ func (c *Client) Set(ctx context.Context, key string, val string) error {
 		resp.StringValue(key),
 		resp.StringValue(val),
 	})
-	_, err = io.Copy(conn, buf)
 
+	_, err = io.Copy(conn, buf)
 	return err
 }
