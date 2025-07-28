@@ -116,6 +116,13 @@ func main() {
 		if err := c.Set(context.TODO(), fmt.Sprintf("foo _%d", i), fmt.Sprintf("bar _%d", i)); err != nil {
 			log.Fatal(err)
 		}
+
+		val, err := c.Get(context.TODO(), fmt.Sprintf("foo _%d", i))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(val)
 	}
 
 	time.Sleep(time.Second)
