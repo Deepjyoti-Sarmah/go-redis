@@ -99,7 +99,6 @@ func (s *Server) acceptLoop() error {
 func (s *Server) handleConn(conn net.Conn) {
 	peer := NewPeer(conn, s.msgCh)
 	s.addPeerCh <- peer
-	slog.Info("new peer connected", "remoteAddr", conn.RemoteAddr())
 	if err := peer.readLoop(); err != nil {
 		slog.Error("peer read error", "err", err, "remoteAddr", conn.RemoteAddr())
 	}
@@ -112,8 +111,8 @@ func main() {
 	}()
 	time.Sleep(time.Second)
 
+	c := client.New("localhost:5001")
 	for i := 0; i < 10; i++ {
-		c := client.New("localhost:5001")
 		if err := c.Set(context.TODO(), fmt.Sprintf("foo _%d", i), fmt.Sprintf("bar _%d", i)); err != nil {
 			log.Fatal(err)
 		}

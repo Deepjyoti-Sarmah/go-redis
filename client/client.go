@@ -4,7 +4,6 @@ package client
 import (
 	"bytes"
 	"context"
-	"io"
 	"net"
 
 	"github.com/tidwall/resp"
@@ -12,6 +11,7 @@ import (
 
 type Client struct {
 	addr string
+	conn net.Conn
 }
 
 func New(addr string) *Client {
@@ -34,6 +34,7 @@ func (c *Client) Set(ctx context.Context, key string, val string) error {
 		resp.StringValue(val),
 	})
 
-	_, err = io.Copy(conn, buf)
+	// _, err = io.Copy(conn, buf)
+	_, err = conn.Write(buf.Bytes())
 	return err
 }
