@@ -132,14 +132,15 @@ func main() {
 			log.Fatal(err)
 		}
 
+		time.Sleep(time.Second)
 		val, err := c.Get(context.TODO(), fmt.Sprintf("foo _%d", i))
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		fmt.Println(val)
+		fmt.Println("got this back =>", val)
 	}
 
-	time.Sleep(time.Second)
-	fmt.Println(server.kv.data)
+	// time.Sleep(time.Second)
+	// fmt.Println(server.kv.data)
 }
