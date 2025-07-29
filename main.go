@@ -126,13 +126,19 @@ func main() {
 	}()
 	time.Sleep(time.Second)
 
-	c := client.New("localhost:5001")
+	c, err := client.New("localhost:5001")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	time.Sleep(time.Second)
+
 	for i := 0; i < 10; i++ {
 		if err := c.Set(context.TODO(), fmt.Sprintf("foo _%d", i), fmt.Sprintf("bar _%d", i)); err != nil {
 			log.Fatal(err)
 		}
 
-		time.Sleep(time.Second)
+		// time.Sleep(time.Second)
 		val, err := c.Get(context.TODO(), fmt.Sprintf("foo _%d", i))
 		if err != nil {
 			log.Fatal(err)
