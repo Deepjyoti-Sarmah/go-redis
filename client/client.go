@@ -52,7 +52,6 @@ func (c *Client) Get(ctx context.Context, key string) (string, error) {
 		resp.StringValue(key),
 	})
 
-	// _, err = io.Copy(conn, buf)
 	_, err = conn.Write(buf.Bytes())
 	if err != nil {
 		return "", err
