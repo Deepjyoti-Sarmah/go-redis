@@ -1,14 +1,11 @@
 package main
 
 import (
-	"context"
+	"flag"
 	"fmt"
 	"log"
 	"log/slog"
 	"net"
-	"time"
-
-	"github.com/deepjyoti-sarmah/go-redis/client"
 )
 
 const defaultListenAddr = ":5001"
@@ -56,7 +53,7 @@ func (s *Server) Start() error {
 
 	go s.loop()
 
-	slog.Info("server running", "ListenAddr", s.ListenAddr)
+	slog.Info("go-redis server running", "ListenAddr", s.ListenAddr)
 
 	return s.acceptLoop()
 }
@@ -120,31 +117,38 @@ func (s *Server) handleConn(conn net.Conn) {
 }
 
 func main() {
-	server := NewServer(Config{})
-	go func() {
-		log.Fatal(server.Start())
-	}()
-	time.Sleep(time.Second)
+	listenAddr := flag.String("listenAddr", defaultListenAddr, "listen address of the go-redis server")
+	flag.Parse()
 
-	c, err := client.New("localhost:5001")
-	if err != nil {
-		log.Fatal(err)
-	}
+	server := NewServer(Config{
+		ListenAddr: *listenAddr,
+	})
+	log.Fatal(server.Start())
 
-	time.Sleep(time.Second)
+	// go func() {
+	// 	log.Fatal(server.Start())
+	// }()
+	// time.Sleep(time.Second)
 
-	for i := 0; i < 10; i++ {
-		fmt.Println("SET this =>", fmt.Sprintf("bar _%d", i))
-
-		if err := c.Set(context.TODO(), fmt.Sprintf("foo _%d", i), fmt.Sprintf("bar _%d", i)); err != nil {
-			log.Fatal(err)
-		}
-
-		val, err := c.Get(context.TODO(), fmt.Sprintf("foo _%d", i))
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		fmt.Println("GET this =>", val)
-	}
+	// c, err := client.New("localhost:5001")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	//
+	// time.Sleep(time.Second)
+	//
+	// for i := 0; i < 10; i++ {
+	// 	fmt.Println("SET this =>", fmt.Sprintf("bar _%d", i))
+	//
+	// 	if err := c.Set(context.TODO(), fmt.Sprintf("foo _%d", i), fmt.Sprintf("bar _%d", i)); err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	//
+	// 	val, err := c.Get(context.TODO(), fmt.Sprintf("foo _%d", i))
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	//
+	// 	fmt.Println("GET this =>", val)
+	// }
 }
